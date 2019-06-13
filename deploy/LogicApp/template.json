@@ -1,0 +1,167 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "workflows_SubscribedToEventGridHashBlob_name": {
+            "defaultValue": "SubscribedToEventGridHashBlob",
+            "type": "String"
+        },
+        "storageAccounts_datastorage27_externalid": {
+            "defaultValue": "/subscriptions/8e745911-9ed7-4b5a-98f1-82e907b0d128/resourceGroups/data/providers/Microsoft.Storage/storageAccounts/datastorage27",
+            "type": "String"
+        },
+        "sites_HashLog_externalid": {
+            "defaultValue": "/subscriptions/8e745911-9ed7-4b5a-98f1-82e907b0d128/resourceGroups/data/providers/Microsoft.Web/sites/HashLog",
+            "type": "String"
+        },
+        "connections_azureblob_externalid": {
+            "defaultValue": "/subscriptions/8e745911-9ed7-4b5a-98f1-82e907b0d128/resourceGroups/data/providers/Microsoft.Web/connections/azureblob",
+            "type": "String"
+        },
+        "connections_azureeventgrid_1_externalid": {
+            "defaultValue": "/subscriptions/8e745911-9ed7-4b5a-98f1-82e907b0d128/resourceGroups/data/providers/Microsoft.Web/connections/azureeventgrid-1",
+            "type": "String"
+        },
+        "connections_blockchainethereum_1_externalid": {
+            "defaultValue": "/subscriptions/8e745911-9ed7-4b5a-98f1-82e907b0d128/resourceGroups/data/providers/Microsoft.Web/connections/blockchainethereum-1",
+            "type": "String"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.Logic/workflows",
+            "apiVersion": "2017-07-01",
+            "name": "[parameters('workflows_SubscribedToEventGridHashBlob_name')]",
+            "location": "westus",
+            "properties": {
+                "state": "Enabled",
+                "definition": {
+                    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {
+                        "$connections": {
+                            "defaultValue": {},
+                            "type": "Object"
+                        }
+                    },
+                    "triggers": {
+                        "When_a_resource_event_occurs": {
+                            "splitOn": "@triggerBody()",
+                            "type": "ApiConnectionWebhook",
+                            "inputs": {
+                                "body": {
+                                    "properties": {
+                                        "destination": {
+                                            "endpointType": "webhook",
+                                            "properties": {
+                                                "endpointUrl": "@{listCallbackUrl()}"
+                                            }
+                                        },
+                                        "filter": {
+                                            "includedEventTypes": [
+                                                "Microsoft.Storage.BlobCreated"
+                                            ]
+                                        },
+                                        "topic": "[parameters('storageAccounts_datastorage27_externalid')]"
+                                    }
+                                },
+                                "host": {
+                                    "connection": {
+                                        "name": "@parameters('$connections')['azureeventgrid_1']['connectionId']"
+                                    }
+                                },
+                                "path": "/subscriptions/@{encodeURIComponent('8e745911-9ed7-4b5a-98f1-82e907b0d128')}/providers/@{encodeURIComponent('Microsoft.Storage.StorageAccounts')}/resource/eventSubscriptions",
+                                "queries": {
+                                    "x-ms-api-version": "2017-09-15-preview"
+                                }
+                            }
+                        }
+                    },
+                    "actions": {
+                        "Execute_smart_contract_function_(incurring_gas_cost)": {
+                            "runAfter": {
+                                "HashLogFunction": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "ApiConnection",
+                            "inputs": {
+                                "body": {
+                                    "filename": "@{split(triggerBody()?['subject'], '/')?[14]}",
+                                    "hashvalue": "@{body('HashLogFunction')}"
+                                },
+                                "host": {
+                                    "connection": {
+                                        "name": "@parameters('$connections')['blockchainethereum_1']['connectionId']"
+                                    }
+                                },
+                                "method": "post",
+                                "path": "/contract/functions/@{encodeURIComponent(encodeURIComponent('insert'))}/execute",
+                                "queries": {
+                                    "abi": "[\n    {\n      \"anonymous\": false,\n      \"inputs\": [\n        {\n          \"indexed\": false,\n          \"name\": \"filename\",\n          \"type\": \"string\"\n        },\n        {\n          \"indexed\": false,\n          \"name\": \"hashvalue\",\n          \"type\": \"string\"\n        }\n      ],\n      \"name\": \"inserted\",\n      \"type\": \"event\"\n    },\n    {\n      \"constant\": false,\n      \"inputs\": [\n        {\n          \"name\": \"filename\",\n          \"type\": \"string\"\n        },\n        {\n          \"name\": \"hashvalue\",\n          \"type\": \"string\"\n        }\n      ],\n      \"name\": \"insert\",\n      \"outputs\": [\n        {\n          \"name\": \"sufficient\",\n          \"type\": \"bool\"\n        }\n      ],\n      \"payable\": false,\n      \"stateMutability\": \"nonpayable\",\n      \"type\": \"function\"\n    },\n    {\n      \"constant\": true,\n      \"inputs\": [\n        {\n          \"name\": \"filename\",\n          \"type\": \"string\"\n        }\n      ],\n      \"name\": \"getLog\",\n      \"outputs\": [\n        {\n          \"name\": \"\",\n          \"type\": \"string\"\n        }\n      ],\n      \"payable\": false,\n      \"stateMutability\": \"view\",\n      \"type\": \"function\"\n    }\n  ]",
+                                    "contractAddress": "0x6846D60d29C736D4C626074982713c498667dCf4",
+                                    "gasLimit": "30000"
+                                }
+                            }
+                        },
+                        "Get_blob_content_using_path": {
+                            "runAfter": {},
+                            "type": "ApiConnection",
+                            "inputs": {
+                                "host": {
+                                    "connection": {
+                                        "name": "@parameters('$connections')['azureblob']['connectionId']"
+                                    }
+                                },
+                                "method": "get",
+                                "path": "/datasets/default/GetFileContentByPath",
+                                "queries": {
+                                    "inferContentType": true,
+                                    "path": "@{concat(split(triggerBody()?['subject'], '/')?[4], '/', split(triggerBody()?['subject'], '/')?[6], '/', split(triggerBody()?['subject'], '/')?[7], '/', split(triggerBody()?['subject'], '/')?[8], '/', split(triggerBody()?['subject'], '/')?[9], '/', split(triggerBody()?['subject'], '/')?[10], '/', split(triggerBody()?['subject'], '/')?[11], '/', split(triggerBody()?['subject'], '/')?[12], '/', split(triggerBody()?['subject'], '/')?[13], '/', split(triggerBody()?['subject'], '/')?[14])}",
+                                    "queryParametersSingleEncoded": true
+                                }
+                            }
+                        },
+                        "HashLogFunction": {
+                            "runAfter": {
+                                "Get_blob_content_using_path": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "Function",
+                            "inputs": {
+                                "body": "@body('Get_blob_content_using_path')",
+                                "function": {
+                                    "id": "[concat(parameters('sites_HashLog_externalid'), '/functions/HashLogFunction')]"
+                                }
+                            }
+                        }
+                    },
+                    "outputs": {}
+                },
+                "parameters": {
+                    "$connections": {
+                        "value": {
+                            "azureblob": {
+                                "connectionId": "[parameters('connections_azureblob_externalid')]",
+                                "connectionName": "azureblob",
+                                "id": "/subscriptions/8e745911-9ed7-4b5a-98f1-82e907b0d128/providers/Microsoft.Web/locations/westus/managedApis/azureblob"
+                            },
+                            "azureeventgrid_1": {
+                                "connectionId": "[parameters('connections_azureeventgrid_1_externalid')]",
+                                "connectionName": "azureeventgrid-1",
+                                "id": "/subscriptions/8e745911-9ed7-4b5a-98f1-82e907b0d128/providers/Microsoft.Web/locations/westus/managedApis/azureeventgrid"
+                            },
+                            "blockchainethereum_1": {
+                                "connectionId": "[parameters('connections_blockchainethereum_1_externalid')]",
+                                "connectionName": "blockchainethereum-1",
+                                "id": "/subscriptions/8e745911-9ed7-4b5a-98f1-82e907b0d128/providers/Microsoft.Web/locations/westus/managedApis/blockchainethereum"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    ]
+}

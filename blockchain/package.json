@@ -1,0 +1,29 @@
+{
+  "name": "hackfest",
+  "version": "1.0.0",
+  "description": "",
+  "main": "truffle-config.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "date-utils": "^1.2.21",
+    "instascan": "^1.0.0",
+    "jsonschema": "^1.2.4",
+    "openzeppelin-solidity": "^2.1.2",
+    "request": "^2.88.0",
+    "truffle": "^5.0.2",
+    "truffle-hdwallet-provider": "^1.0.2",
+    "web3": "^1.0.0-beta.55",
+    "truffle-test-utils": "^0.1.0"
+  },
+  "devDependencies": {
+    "mocha": "^5.2.0",
+    "mocha-junit-reporter": "^1.18.0"
+  }
+}

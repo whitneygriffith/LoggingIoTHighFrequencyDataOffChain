@@ -1,0 +1,24 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "workflows_SubscribedToEventGridHashBlob_name": {
+            "value": null
+        },
+        "storageAccounts_datastorage27_externalid": {
+            "value": null
+        },
+        "sites_HashLog_externalid": {
+            "value": null
+        },
+        "connections_azureblob_externalid": {
+            "value": null
+        },
+        "connections_azureeventgrid_1_externalid": {
+            "value": null
+        },
+        "connections_blockchainethereum_1_externalid": {
+            "value": null
+        }
+    }
+}
