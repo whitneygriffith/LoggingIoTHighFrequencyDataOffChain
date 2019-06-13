@@ -15,15 +15,15 @@ Using the following technologies:
 
 Millions of off chain events can be collected, stored in immutable blob storage, and the hash of each blob can then be anchored on the blockchain for verification of immutability.
 
-
- ![alt text](./images/MainADS.jpg "Main Archictecture")
-__Arcthitecture Diagram__
+__Arcthitecture__
 
 N.B. Event Hubs writed the data to immutable blob on a set interval such as every second or every minute. 
+ ![alt text](./images/MainADS.jpg "Main Archictecture")
 
+__Logic App Connectors__ 
 
   ![alt text](./images/LogicAppFlow.jpg "Logic App")
-__Logic App Connectors__ 
+
 
 
 ### Prerequisites: 
