@@ -17,7 +17,7 @@ Millions of off chain events can be collected, stored in immutable blob storage,
 
 __Arcthitecture__
 
-N.B. Event Hubs writed the data to immutable blob on a set interval such as every second or every minute. 
+N.B. Event Hubs write the data to immutable blob on a set interval such as every second or every minute. 
  ![alt text](./images/MainADS.jpg "Main Archictecture")
 
 __Logic App Connectors__ 
