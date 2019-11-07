@@ -28,7 +28,7 @@ __Logic App Connectors__
 
 ### Prerequisites: 
 - [Azure Blockchain Member Deployed](https://docs.microsoft.com/en-us/azure/blockchain/service/create-member)
-- [HashLog Smart Contract deployed to network](./blockchain/contracts/hashLog.sol)
+- [HashLog Smart Contract deployed to network](./hashLogSmartContract/contracts/hashLog.sol)
 
 ### Walkthrough 
 
