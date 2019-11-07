@@ -1,4 +1,7 @@
 const HDWalletProvider = require('truffle-hdwallet-provider');
+var mnemonic = "runway merge resist deal ice hurry strategy chalk pottery quarter finger record";
+var networkEndpoint = "https://oneweekwcgmember.blockchain.azure.com:3200/VcHDIGstdtMEaquBxfJLq-cJ"
+
 const fs = require('fs');
 module.exports = {
   networks: {
@@ -11,7 +14,7 @@ module.exports = {
       network_id: "*",
       gas: 0,
       gasPrice: 0,
-      provider: new HDWalletProvider(fs.readFileSync('/Users/whitneygriffith/Desktop/oneweek/oneweekwcgmember.env', 'utf-8'), "https://oneweekwcgmember.blockchain.azure.com:3200/VcHDIGstdtMEaquBxfJLq-cJ")
+      provider: new HDWalletProvider(mnemonic, networkEndpoint)
     }
   },
   mocha: {},
